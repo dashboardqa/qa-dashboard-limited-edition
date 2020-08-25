@@ -1,0 +1,113 @@
+version: "3.7"
+services:
+  qa-dashboard-mongo:
+    image: "mongo:3.6.0"
+    restart: "on-failure"
+    ports:
+    - "27017:27017"
+    container_name: "qa-dashboard-mongo"
+    volumes:
+    - ~/docker/volume/qa-dashboard/mongo:/data/db
+
+  qa-dashboard-ui:
+    image: "qadashboard/qa-dashboard-ui"
+    restart: "on-failure"
+    ports:
+    - "4200:80"
+    container_name: "qa-dashboard-ui"
+    depends_on:
+      - qa-dashboard-nginx
+
+  qa-dashboard-nginx:
+    image: "qadashboard/qa-dashboard-nginx"
+    restart: "on-failure"
+    ports:
+      - "80:80"
+    container_name: "qa-dashboard-nginx"
+
+  qa-dashboard-eureka-server:
+    image: "qadashboard/qa-dashboard-eureka-server"
+    restart: "on-failure"
+    ports:
+      - "8761:8761"
+      - "58761:58761"
+    env_file:
+      - env.list
+    depends_on:
+      - qa-dashboard-nginx
+    container_name: "qa-dashboard-eureka-server"
+
+  qa-dashboard-uaa:
+    image: "qadashboard/qa-dashboard-uaa"
+    restart: "on-failure"
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+    env_file:
+      - env.list
+    container_name: "qa-dashboard-uaa"
+    depends_on:
+      - qa-dashboard-mongo
+      - qa-dashboard-eureka-server
+      - qa-dashboard-nginx
+
+  qa-dashboard-addons:
+    image: "qadashboard/qa-dashboard-addons"
+    restart: "on-failure"
+    ports:
+      - "8079:8079"
+      - "58079:58079"
+    env_file:
+      - env.list
+    container_name: "qa-dashboard-addons"
+    volumes:
+      - ~/docker/volume/qa-dashboard/certs:/srv/certs
+    depends_on:
+      - qa-dashboard-mongo
+      - qa-dashboard-eureka-server
+      - qa-dashboard-nginx
+
+  qa-dashboard-devteam:
+    image: "qadashboard/qa-dashboard-devteam"
+    restart: "on-failure"
+    ports:
+      - "8078:8078"
+      - "58078:58078"
+    env_file:
+      - env.list
+    container_name: "qa-dashboard-devteam"
+    depends_on:
+      - qa-dashboard-mongo
+      - qa-dashboard-eureka-server
+      - qa-dashboard-nginx
+
+  qa-dashboard-gitwiser:
+    image: "qadashboard/qa-dashboard-gitwiser"
+    restart: "on-failure"
+    ports:
+      - "8077:8077"
+      - "58077:58077"
+    env_file:
+      - env.list
+    container_name: "qa-dashboard-gitwiser"
+    volumes:
+      - ~/docker/volume/qa-dashboard/gitwiser:/tmp/gitwiser
+      - ~/docker/volume/qa-dashboard/certs:/srv/certs
+    depends_on:
+      - qa-dashboard-mongo
+      - qa-dashboard-eureka-server
+      - qa-dashboard-nginx
+
+  qa-dashboard-platform:
+    image: "qadashboard/qa-dashboard"
+    restart: "on-failure"
+    ports:
+      - "8080:8080"
+      - "58080:58080"
+    env_file:
+      - env.list
+    container_name: "qa-dashboard"
+    depends_on:
+      - qa-dashboard-mongo
+      - qa-dashboard-eureka-server
+      - qa-dashboard-nginx
