@@ -14,9 +14,11 @@ https://docs.dashboard.qa/getting-started/limited-dockerize-edition
 
  * Docker
  * docker-compose
+ * Azure container registry user account from Testinium A.S. (please contact us: https://dashboard.qa/contact/)
  
 ## Resources
 
  * [Documentation](https://docs.dashboard.qa)
  * [QA Dashboard Website](https://dashboard.qa)
  * [QA Dashboard Playground - Live Demo](https://playground.dashboard.qa)
+ * [Contact Us](https://dashboard.qa/contact/)
